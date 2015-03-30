@@ -76,7 +76,7 @@ def write_file(target, fobj):
     return res
 
 def save_uploaded_file(fprefix, fobj):
-    metadata = "original_name: %s" %(to_str(fobj.filename), )
+    metadata = "original_name: %s\n" %(to_str(fobj.filename), )
     metadata += "\n".join(
         to_str("%s: %s" %(k, v))
         for (k, v) in sorted(request.environ.items())
