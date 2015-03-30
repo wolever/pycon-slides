@@ -2,7 +2,7 @@
 <html>
 
   <head>
-    <title>PyCon Slide Deck Uploader</title>
+    <title>PyCon Speaker Slide Deck Uploader</title>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
@@ -13,8 +13,13 @@
   </head>
 
   <body>
-    <div class="container">
-      <h1>PyCon Slide Deck Uploader</h1>
+    <div class="container" style="max-width: 800px">
+      <h1>PyCon Speaker Slide Deck Uploader</h1>
+
+      <p>
+        Please upload the slides for your talk, even if they are not complete
+        yet. They will be used to improve the accuracy of real-time captioning.
+      </p>
 
       <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
@@ -40,7 +45,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
 
-      <h3>FAQ</h3>
+      <h3 style="margin-top: 50px">FAQ</h3>
 
       <p>
         <strong>Why are slides so important this year?</strong><br />
@@ -94,6 +99,14 @@
 
   <script>
     $("select").select2();
+    $("form").on("change", function() {
+      var $btn = $(this).find("button");
+      $btn.attr("disabled", false);
+      $(this).find("input, select").each(function() {
+        if (!$(this).val())
+          $btn.attr("disabled", true);
+      });
+    }).trigger("change");
   </script>
 
 </html>
