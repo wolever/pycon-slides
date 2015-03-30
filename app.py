@@ -75,8 +75,9 @@ def write_file(target, fobj):
     print target, "-->", res
     return res
 
-def save_uploaded_file(fprefix, fobj):
-    metadata = "original_name: %s\n" %(to_str(fobj.filename), )
+def save_uploaded_file(fprefix, fobj, schd_id):
+    metadata = "schedule_id: %s\n" %(schd_id, )
+    metadata += "original_name: %s\n" %(to_str(fobj.filename), )
     metadata += "\n".join(
         to_str("%s: %s" %(k, v))
         for (k, v) in sorted(request.environ.items())
@@ -92,17 +93,29 @@ def save_uploaded_file(fprefix, fobj):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        fprefix = get_uploaded_file_name(int(request.form["schedule_id"]))
+        schd_id = int(request.form["schedule_id"])
+        fprefix = get_uploaded_file_name(schd_id)
         fobj = request.files["slides"]
-        fname = save_uploaded_file(fprefix, fobj)
+        fname = save_uploaded_file(fprefix, fobj, schd_id)
         return flask.Response(
             "%s saved. Thanks!" %(fname, ),
             content_type="text/plain",
         )
 
-    return flask.render_template("index.html", schedule=get_schedule())
+    resp = flask.make_response(
+        flask.render_template(
+            "index.html",
+            schedule=get_schedule(),
+        )
+    )
+    if "client_id" not in request.cookies:
+        resp.set_cookie("client_id", mk_random_id())
+    return resp
 
 def load_environ():
+    if not os.path.exists(".environ"):
+        environ["NO_DROPBOX"] = True
+        return
     with open(".environ") as f:
         for line in f:
             line = line.strip()
@@ -112,12 +125,5 @@ def load_environ():
             environ[k] = v
 
 if __name__ == "__main__":
-    if not os.path.exists(".environ"):
-        print "ERROR: .environ does not exist."
-        print "Add environment variables in the form:"
-        print "    KEY=value"
-        print "there for development."
-        print "HINT:"
-        print "  NO_DROPBOX=true"
     load_environ()
     app.run(port=8812, debug=True)
