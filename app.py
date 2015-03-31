@@ -77,17 +77,18 @@ def write_file(target, fobj):
 
 def save_uploaded_file(fprefix, fobj, schd_id):
     metadata = "schedule_id: %s\n" %(schd_id, )
-    metadata += "original_name: %s\n" %(to_str(fobj.filename), )
+    metadata += "release_to: %s\n" %("\n".join(request.form.getlist("release")), )
+    metadata += "original_name: %s\n" %(fobj.filename, )
     metadata += "\n".join(
-        to_str("%s: %s" %(k, v))
+        "%s: %s" %(k, v)
         for (k, v) in sorted(request.environ.items())
         if not (k.startswith("wsgi.") or k.startswith("werkzeug."))
     )
-    write_file(fprefix + "-log.txt", io.BytesIO(metadata))
+    write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
     fname = fprefix + to_str(os.path.splitext(fobj.filename)[1])
     res = write_file(fname, fobj)
     metadata += "\n\nresult: %r" %(res, )
-    write_file(fprefix + "-log.txt", io.BytesIO(metadata))
+    write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
     return fname
 
 @app.route("/", methods=["GET", "POST"])

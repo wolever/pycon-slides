@@ -42,13 +42,28 @@
           <input id="slides" name="slides" type="file" />
         </div>
 
+        <div class="form-group">
+          <label>Release slides for&hehlip;</label>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="release" value="cart" checked /> Closed captioning
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="release" value="speakerdeck" />
+              Uploading to <a href="https://speakerdeck.com/pycon2015">SpeakerDeck</a>
+            </label>
+          </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
 
-      <h3 style="margin-top: 50px">FAQ</h3>
+      <h3 style="margin-top: 50px; margin-bottom: -10px">FAQ</h3>
 
+      <h4>Why are slides so important this year?</h4>
       <p>
-        <strong>Why are slides so important this year?</strong><br />
         We will have real-time closed captioning for <em>all</em> the talks
         this year, and uploading your slide deck ahead of time will help the
         caption writer pre-populate their dictionary with any obscure terms or
@@ -56,42 +71,45 @@
         useful</strong>!
       </p>
 
+      <h4>How will my slides be used?</h4>
       <p>
-        <strong>What will happen to my slides?</strong><br />
-        Your slides will be uploaded to SpeakerDeck by a volunteer, and will be
-        used by the real-time closed caption writer to help pre-populate their
-        dictionary with any obscure terms you may be using.
+        Your slides will be used by the real-time closed caption writer to help
+        pre-populate their dictionary with any obscure terms you may be using.
+        If you've selected "Release to SpeakerDeck" a volunteer will also
+        upload your slides to the PyCon SpeakerDeck account:
+        <a href="https://speakerdeck.com/pycon2015">https://speakerdeck.com/pycon2015</a>.
       </p>
 
+      <h4>Can I upload multiple times?</h4>
       <p>
-        <strong>Can I upload multiple times?</strong><br />
         Yep, no problem! Upload early, upload often!
       </p>
 
+      <h4>What format should I use?</h4>
       <p>
-        <strong>What format should I use?</strong><br />
-        PDF is best. Otherwise, whatever your source format is. If you're using
-        HTML, zip the <tt>.html</tt> file and all required assets and upload
-        the zip file. If your talk includes code or other examples, zip those
-        and upload the zip file.
+        PDF is best. If PDF is exceeding difficult then the source format will
+        be better than nothing. If you're using HTML, zip the <tt>.html</tt>
+        file and all required assets and upload the zip file. If your talk
+        includes code or other examples, zip those and upload the zip file.
       </p>
 
+      <h4>What if I made a mistake?</h4>
       <p>
-        <strong>What if I made a mistake?</strong><br />
         Don't worry about it. Just fix the mistake and upload again.
       </p>
 
+      <h4>Oh no everything is exploding!</h4>
       <p>
-        <strong>Oh no everything is exploding!</strong><br />
         Email <a href="mailto:wolever@pycon.ca">wolever@pycon.ca</a>!
       </p>
 
+      <h4>Where can I find the source?</h4>
       <p>
-        <strong>Where can I find the source?</strong><br /><a href="https://github.com/wolever/pycon-slides">https://github.com/wolever/pycon-slides</a>
+        <a href="https://github.com/wolever/pycon-slides">https://github.com/wolever/pycon-slides</a>
       </p>
 
+      <h4>How can I contact you?</h4>
       <p>
-        <strong>How can I contact you?</strong><br />
         <a href="mailto:wolever@pycon.ca">wolever@pycon.ca</a> or @<a href="https://twitter.com/wolever">wolever</a>
       </p>
     </div>
@@ -108,5 +126,11 @@
       });
     }).trigger("change");
   </script>
+
+  <style>
+    h4 {
+      margin-top: 30px;
+    }
+  </style>
 
 </html>
