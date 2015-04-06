@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 fscache = FSCache("cache/", "cache")
 SCHEDULE_JSON_URL = "https://us.pycon.org/2015/schedule/conference.json"
-SCHEDULE_CACHE_SECONDS = 600
+SCHEDULE_CACHE_SECONDS = 60 * 60 * 12
 
 def get_dropbox_client():
     return dropbox.client.DropboxClient(environ["DROPBOX_ACCESS_TOKEN"])
