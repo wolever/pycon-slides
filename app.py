@@ -2,6 +2,7 @@ import io
 import os
 import time
 from os import environ
+from threading import Thread
 from datetime import datetime
 
 import json
@@ -75,21 +76,49 @@ def write_file(target, fobj):
     print target, "-->", res
     return res
 
+def save_uploaded_file_real(fname_list, fprefix, fobj, filename, schd_id, release, environ_items):
+    fname = fprefix + to_str(os.path.splitext(filename)[1])
+    fname_list.append(fname)
+    import time
+    time.sleep(20)
+
+    try:
+        metadata = "schedule_id: %s\n" %(schd_id, )
+        metadata += "release_to: %s\n" %("\n".join(release), )
+        metadata += "original_name: %s\n" %(filename, )
+        metadata += "\n".join(
+            "%s: %s" %(k, v)
+            for (k, v) in sorted(environ_items)
+            if not (k.startswith("wsgi.") or k.startswith("werkzeug."))
+        )
+        write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
+        res = write_file(fname, fobj)
+        metadata += "\n\nresult: %r" %(res, )
+        write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
+    finally:
+        fobj.close()
+
 def save_uploaded_file(fprefix, fobj, schd_id):
-    metadata = "schedule_id: %s\n" %(schd_id, )
-    metadata += "release_to: %s\n" %("\n".join(request.form.getlist("release")), )
-    metadata += "original_name: %s\n" %(fobj.filename, )
-    metadata += "\n".join(
-        "%s: %s" %(k, v)
-        for (k, v) in sorted(request.environ.items())
-        if not (k.startswith("wsgi.") or k.startswith("werkzeug."))
+    release = request.form.getlist("release")
+    environ_items = request.environ.items()
+    fname_list = []
+    # weee this can fail and we'll have noooooo idea and this is terrible :D
+    # TODO: fix that...
+    # NB: need to do this in the background because Heroku likes its workers to
+    # respond quickly, but saving to dropbox can be a bit slow.
+    temp_fname = "/tmp/temp-upload-%s" %(mk_random_id(), )
+    fobj.save(temp_fname)
+    temp_fobj = open(temp_fname)
+    thread = Thread(
+        target=save_uploaded_file_real,
+        args=(fname_list, fprefix, temp_fobj, fobj.filename, schd_id, release, environ_items),
     )
-    write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
-    fname = fprefix + to_str(os.path.splitext(fobj.filename)[1])
-    res = write_file(fname, fobj)
-    metadata += "\n\nresult: %r" %(res, )
-    write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
-    return fname
+    os.unlink(temp_fname)
+    thread.start()
+    thread.join(10)
+    if thread.is_alive():
+        return None
+    return fname_list[0]
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -99,7 +128,7 @@ def index():
         fobj = request.files["slides"]
         fname = save_uploaded_file(fprefix, fobj, schd_id)
         return flask.Response(
-            "%s saved. Thanks!" %(fname, ),
+            "%s saved. Thanks!" %(fname or "File", ),
             content_type="text/plain",
         )
 
