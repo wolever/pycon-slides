@@ -340,10 +340,11 @@ def index():
     return resp
 
 def load_environ():
-    if not os.path.exists(".environ"):
+    env_file = os.path.join(os.path.dirname(__file__), ".environ")
+    if not os.path.exists(env_file):
         environ["NO_DROPBOX"] = True
         return
-    with open(".environ") as f:
+    with open(env_file) as f:
         for line in f:
             line = line.strip()
             if line.startswith("#"):
@@ -352,6 +353,7 @@ def load_environ():
             environ[k] = v
 
 
+load_environ()
+
 if __name__ == "__main__":
-    load_environ()
     app.run(port=8812, debug=True)
