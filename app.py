@@ -1,9 +1,11 @@
 import io
 import os
 import time
+import smtplib
 from os import environ
 from threading import Thread
 from datetime import datetime
+from email.mime.text import MIMEText
 
 import json
 import dropbox
@@ -23,6 +25,24 @@ SCHEDULE_CACHE_SECONDS = 60 * 60 * 12
 
 def get_dropbox_client():
     return dropbox.client.DropboxClient(environ["DROPBOX_ACCESS_TOKEN"])
+
+def send_email(recips, subject, body):
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = "wolever@pycon.ca"
+    msg['To'] = ", ".join(recips)
+
+    # Send the message via our own SMTP server, but don't include the
+    # envelope header.
+    s = smtplib.SMTP(
+        environ["MAILGUN_SMTP_SERVER"],
+        int(environ["MAILGUN_SMTP_PORT"]),
+    )
+    s.starttls()
+    s.login(environ["MAILGUN_SMTP_LOGIN"], environ["MAILGUN_SMTP_PASSWORD"])
+    s.sendmail(msg['From'], recips, msg.as_string())
+    s.quit()
+
 
 def download_schedule(_, output_file):
     resp = requests.get(SCHEDULE_JSON_URL, verify=False)
@@ -245,8 +265,6 @@ def write_file(target, fobj):
 def save_uploaded_file_real(fname_list, fprefix, fobj, filename, schd_id, release, environ_items):
     fname = fprefix + to_str(os.path.splitext(filename)[1])
     fname_list.append(fname)
-    import time
-    time.sleep(20)
 
     try:
         metadata = "schedule_id: %s\n" %(schd_id, )
@@ -263,6 +281,19 @@ def save_uploaded_file_real(fname_list, fprefix, fobj, filename, schd_id, releas
         write_file(fprefix + "-log.txt", io.BytesIO(to_str(metadata)))
     finally:
         fobj.close()
+
+    if not environ.get("NO_DROPBOX"):
+        db = get_dropbox_client()
+        share = db.media(res["path"])
+        send_email(
+            [x.strip() for x in os.environ["MAIL_RECIPIENTS"].split(",")],
+            "New PyCon slide upload",
+            "\n".join([
+                "New file: %s" %(fname, ),
+                "Download: %s" %(share["url"], ),
+                "Original file name: %s" %(filename, ),
+            ]),
+        )
 
 def save_uploaded_file(fprefix, fobj, schd_id):
     release = request.form.getlist("release")
@@ -319,6 +350,7 @@ def load_environ():
                 continue
             k, _, v = line.partition("=")
             environ[k] = v
+
 
 if __name__ == "__main__":
     load_environ()
