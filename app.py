@@ -98,7 +98,7 @@ def get_schedule():
             "end": "2015-04-11T09:40:00",
             "kind": "keynote",
             "license": "CC",
-            "name": "Keynote",
+            "name": "Keynote (Saturday)",
             "released": True,
             "room": "Room 517AB",
             "tags": ""
@@ -156,6 +156,46 @@ def get_schedule():
             "duration": 40,
             "start": "2015-04-12T09:20:00",
             "end": "2015-04-12T10:00:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Guido van Rossum",
+            ],
+            "conf_key": 100006,
+            "contact": [
+                "guido@python.org",
+            ],
+            "description": "Keynote",
+            "duration": 40,
+            "start": "2015-04-12T15:10:00",
+            "end": "2015-04-12T15:50:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Type Hints",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Gary Bernhardt",
+            ],
+            "conf_key": 100007,
+            "contact": [
+                "gary.bernhardt@gmail.com",
+            ],
+            "description": "Keynote",
+            "duration": 40,
+            "start": "2015-04-12T15:50:00",
+            "end": "2015-04-12T16:30:00",
             "kind": "keynote",
             "license": "CC",
             "name": "Keynote",
