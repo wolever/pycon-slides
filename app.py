@@ -31,7 +31,7 @@ def download_schedule(_, output_file):
         for block in resp.iter_content(4096):
             f.write(block)
 
-def get_schedule():
+def _get_schedule():
     data_file = fscache.get_or_create("schedule", "schedule", download_schedule)
     if time.time() - os.path.getmtime(data_file) > SCHEDULE_CACHE_SECONDS:
         os.unlink(data_file)
@@ -39,6 +39,132 @@ def get_schedule():
 
     with open(data_file) as f:
         return json.load(f)
+
+def get_schedule():
+    schedule = _get_schedule()
+    return [
+        {
+            "abstract": "",
+            "authors": [
+                "Julia Evans",
+            ],
+            "conf_key": 100000,
+            "contact": [
+                "julia@jvns.ca",
+            ],
+            "description": "Keynote",
+            "duration": 30,
+            "start": "2015-04-10T09:00:00",
+            "end": "2015-04-10T090:30:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Catherine Bracy",
+            ],
+            "conf_key": 100001,
+            "contact": [
+                "bracy@codeforamerica.org",
+            ],
+            "description": "Keynote",
+            "duration": 40,
+            "start": "2015-04-10T09:30:00",
+            "end": "2015-04-10T10:10:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Guido van Rossum",
+            ],
+            "conf_key": 100002,
+            "contact": [
+                "guido@python.org",
+            ],
+            "description": "Keynote",
+            "duration": 40,
+            "start": "2015-04-11T09:00:00",
+            "end": "2015-04-11T09:40:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Gabriella Coleman",
+            ],
+            "conf_key": 100003,
+            "contact": [
+                "gabriella.coleman@mcgill.ca",
+            ],
+            "description": "Keynote",
+            "duration": 40,
+            "start": "2015-04-11T09:40:00",
+            "end": "2015-04-11T10:20:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Van Lindberg",
+            ],
+            "conf_key": 100004,
+            "contact": [
+                "van.lindberg@gmail.com",
+            ],
+            "description": "Keynote",
+            "duration": 20,
+            "start": "2015-04-12T09:00:00",
+            "end": "2015-04-12T09:20:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+        {
+            "abstract": "",
+            "authors": [
+                "Jacob Kaplan-Moss",
+            ],
+            "conf_key": 100005,
+            "contact": [
+                "jacob@jacobian.org",
+            ],
+            "description": "Keynote",
+            "duration": 40,
+            "start": "2015-04-12T09:20:00",
+            "end": "2015-04-12T10:00:00",
+            "kind": "keynote",
+            "license": "CC",
+            "name": "Keynote",
+            "released": True,
+            "room": "Room 517AB",
+            "tags": ""
+        },
+    ] + schedule
+
 
 def schedule_item_file_prefix(item):
     start = datetime.strptime(item["start"], "%Y-%m-%dT%H:%M:%S")
