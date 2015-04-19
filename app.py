@@ -268,7 +268,7 @@ def save_uploaded_file_real(fname_list, fprefix, fobj, filename, schd_id, releas
 
     try:
         metadata = "schedule_id: %s\n" %(schd_id, )
-        metadata += "release_to: %s\n" %("\n".join(release), )
+        metadata += "release_to: %s\n" %(",".join(release), )
         metadata += "original_name: %s\n" %(filename, )
         metadata += "\n".join(
             "%s: %s" %(k, v)
